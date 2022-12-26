@@ -9,12 +9,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FloatingActorB.h"
 
 // Sets default values for this component's properties
 UTP_WeaponComponent::UTP_WeaponComponent()
 {
 	// Default offset from the character location for projectiles to spawn
-	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
+	// MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
+	MuzzleOffset = FVector(400.0f, 0.0f, 100.0f);
 }
 
 
@@ -41,9 +43,12 @@ void UTP_WeaponComponent::Fire()
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 	
 			// Spawn the projectile at the muzzle
-			World->SpawnActor<ACanCrashProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			// World->SpawnActor<ACanCrashProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			AActor* floatingActorInstance = World->SpawnActor<AFloatingActorB>(AFloatingActorB::StaticClass(), SpawnLocation, SpawnRotation, ActorSpawnParams);
+			// floatingActorInstance->SetRootComponent();
 		}
 	}
+
 	
 	// Try and play the sound if specified
 	if (FireSound != nullptr)
