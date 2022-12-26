@@ -14,15 +14,19 @@ AFloatingActorB::AFloatingActorB()
 
 	RootComponent = VisualMesh;
 
-	// static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeVisualAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeVisualAsset(TEXT("/Game/BlenderImports/CanMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> AssetFinderResult(TEXT("/Game/BlenderImports/CanMesh"));
 
-	if (CubeVisualAsset.Succeeded())
+	if (AssetFinderResult.Succeeded())
 	{
-		VisualMesh->SetStaticMesh(CubeVisualAsset.Object);
+		VisualMesh->SetStaticMesh(AssetFinderResult.Object);
 		VisualMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 		VisualMesh->SetSimulatePhysics(true);
+		VisualMesh->SetMassOverrideInKg(NAME_None, 1.0f);
 	}
+
+	InitialLifeSpan = 10.0f;
+
+	SetActorScale3D(FVector(0.75f, 0.75f, 0.75f));
 
 }
 
@@ -38,15 +42,5 @@ void AFloatingActorB::BeginPlay()
 void AFloatingActorB::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//FVector NewLocation = GetActorLocation();
-	//FRotator NewRotation = GetActorRotation();
-	//float RunningTime = GetGameTimeSinceCreation();
-	//float DeltaHeight = (FMath::Sin(RunningTime + DeltaTime) - FMath::Sin(RunningTime));
-	//NewLocation.Z += DeltaHeight * 20.0f;       //Scale our height by a factor of 20
-	//float DeltaRotation = DeltaTime * 20.0f;    //Rotate by 20 degrees per second
-	//NewRotation.Yaw += DeltaRotation;
-	//SetActorLocationAndRotation(NewLocation, NewRotation);
-
 }
 

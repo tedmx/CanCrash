@@ -16,7 +16,7 @@ UTP_WeaponComponent::UTP_WeaponComponent()
 {
 	// Default offset from the character location for projectiles to spawn
 	// MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
-	MuzzleOffset = FVector(400.0f, 0.0f, 100.0f);
+	MuzzleOffset = FVector(100, 0.0f, 10.0f);
 }
 
 
@@ -45,7 +45,8 @@ void UTP_WeaponComponent::Fire()
 			// Spawn the projectile at the muzzle
 			// World->SpawnActor<ACanCrashProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
 			AActor* floatingActorInstance = World->SpawnActor<AFloatingActorB>(AFloatingActorB::StaticClass(), SpawnLocation, SpawnRotation, ActorSpawnParams);
-			// floatingActorInstance->SetRootComponent();
+			UPrimitiveComponent* sodaCanMesh = (UPrimitiveComponent*)floatingActorInstance->GetComponentByClass(UStaticMeshComponent::StaticClass());
+			sodaCanMesh->AddImpulse(SpawnRotation.RotateVector(FVector(3500, 0, 0)), NAME_None, true);
 		}
 	}
 
