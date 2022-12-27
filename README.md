@@ -1,3 +1,3 @@
 # CanCrash
 
-Playing with Unreal engine simple physics features
+Playing with Unreal engine and its physics subsystem

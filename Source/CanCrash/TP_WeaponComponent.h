@@ -19,7 +19,7 @@ public:
 	TSubclassOf<class ACanCrashProjectile> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<class AFloatingActorB> FloatingActorClass;
+	TSubclassOf<class ASimpleSodaCan> FloatingActorClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
@@ -51,6 +51,10 @@ public:
 	/** Make the weapon Fire a Projectile */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
+
+	/** Make the weapon Fire a Projectile */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void FireOld();
 
 protected:
 	/** Ends gameplay for this component. */
