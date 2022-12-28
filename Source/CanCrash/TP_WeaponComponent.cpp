@@ -9,13 +9,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Engine/StaticMeshActor.h"
 #include "SimpleSodaCan.h"
 
 // Sets default values for this component's properties
 UTP_WeaponComponent::UTP_WeaponComponent()
 {
 	// Default offset from the character location for projectiles to spawn
-	MuzzleOffset = FVector(100, 0.0f, 10.0f);
+	MuzzleOffset = FVector(100, 45.0f, 0);
 }
 
 void UTP_WeaponComponent::Fire()
@@ -25,28 +26,31 @@ void UTP_WeaponComponent::Fire()
 		return;
 	}
 
-	// Try and fire a projectile
-	if (ProjectileClass != nullptr)
+	UWorld* const World = GetWorld();
+	if (World != nullptr && ProjectileMesh)
 	{
-		UWorld* const World = GetWorld();
-		if (World != nullptr)
-		{
-			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-	
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-	
-			// Spawn the projectile at the muzzle
-			AActor* floatingActorInstance = World->SpawnActor<ASimpleSodaCan>(ASimpleSodaCan::StaticClass(), SpawnLocation, SpawnRotation, ActorSpawnParams);
-			UPrimitiveComponent* sodaCanMesh = (UPrimitiveComponent*)floatingActorInstance->GetComponentByClass(UStaticMeshComponent::StaticClass());
-			sodaCanMesh->AddImpulse(SpawnRotation.RotateVector(FVector(3500, 0, 0)), NAME_None, true);
-		}
-	}
+		APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
+		const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+		const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
 
+		FActorSpawnParameters ActorSpawnParams;
+
+		AStaticMeshActor* projectileActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), SpawnLocation, SpawnRotation, ActorSpawnParams);
+		projectileActor->SetLifeSpan(10.0f);
+
+		UStaticMeshComponent* projectileMeshComp = Cast<UStaticMeshComponent>(projectileActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+
+		projectileMeshComp->SetMobility(EComponentMobility::Movable);
+		projectileMeshComp->SetStaticMesh(ProjectileMesh);
+		projectileMeshComp->SetSimulatePhysics(true);
+
+		projectileMeshComp->AddImpulse(SpawnRotation.RotateVector(FVector(3500, 0, 0)), NAME_None, true);
+		projectileMeshComp->SetMassOverrideInKg(NAME_None, 1.0f);
+
+		projectileActor->SetActorRotation(SpawnRotation + InitialProjectileRotation);
+		projectileActor->SetActorScale3D(FVector(0.75f, 0.75f, 0.75f));
+	}
 	
 	// Try and play the sound if specified
 	if (FireSound != nullptr)

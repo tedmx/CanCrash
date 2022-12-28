@@ -15,11 +15,8 @@ class CANCRASH_API UTP_WeaponComponent : public USkeletalMeshComponent
 
 public:
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category=Projectile)
+	// UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class ACanCrashProjectile> ProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<class ASimpleSodaCan> FloatingActorClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
@@ -52,8 +49,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
 
-	/** Make the weapon Fire a Projectile */
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	FRotator InitialProjectileRotation;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UStaticMesh* ProjectileMesh;
+
+	// TODO: Remove later
 	void FireOld();
 
 protected:
@@ -64,4 +66,6 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	ACanCrashCharacter* Character;
+
+	//UStaticMesh* ProjectileMesh;
 };
